@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:to_do_app/data/model/ToDoElement.dart';
+import 'package:to_do_app/data/model/to_do_model.dart';
 
 void main() {
   runApp(const MyApp());
@@ -40,16 +40,16 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  var toDoList = <ToDoElement>[];
+  var toDoList = <ToDo>[];
 
   void _addToDo(String name) {
     setState(() {
-      var toDo = ToDoElement(name: name);
+      var toDo = ToDo(name: name);
       toDoList.add(toDo);
     });
   }
 
-  void _removeToDo(ToDoElement toDo) {
+  void _removeToDo(ToDo toDo) {
     setState(() {
       if (toDoList.contains(toDo)) {
         toDoList.remove(toDo);
@@ -113,7 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         SnackBar(content: Text('${toDo.name} removed')),
                       );
                     },
-                    child: ToDo(toDo: toDo),
+                    child: ToDoElement(toDo: toDo),
                   )
               ],
 
@@ -130,19 +130,19 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
 
-class ToDo extends StatefulWidget {
-  const ToDo({
+class ToDoElement extends StatefulWidget {
+  const ToDoElement({
     super.key,
     required this.toDo,
   });
 
-  final ToDoElement toDo;
+  final ToDo toDo;
 
   @override
-  State<ToDo> createState() => _ToDoState();
+  State<ToDoElement> createState() => _ToDoElementState();
 }
 
-class _ToDoState extends State<ToDo> {
+class _ToDoElementState extends State<ToDoElement> {
   @override
   Widget build(BuildContext context) {
     return Row(
