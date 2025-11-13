@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:to_do_app/data/model/to_do_model.dart';
+import 'package:to_do_app/ui/core/ui/error_indicator.dart';
 import 'package:to_do_app/ui/home/view_models/home_viewmodel.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -41,8 +42,67 @@ class _HomeScreenState extends State<HomeScreen> {
   
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    throw UnimplementedError();
+  return Scaffold(
+       body: SafeArea(
+        top: true,
+        bottom: true,
+        child: ListenableBuilder(
+          listenable: widget.viewModel.load,
+          builder: (context, child) {
+            if (widget.viewModel.load.running) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (widget.viewModel.load.error) {
+              return ErrorIndicator(
+                title: "Error loading home screen",
+                label: "Try again",
+                onPressed: widget.viewModel.load.execute,
+              );
+            }
+
+            return child!;
+          },
+          child: ListenableBuilder(
+            listenable: widget.viewModel,
+            builder: (context, _) {
+              return ListView.builder(
+                itemCount: widget.viewModel.toDoList.length,
+                itemBuilder: (_, index) => _ToDoElement(
+                  key: ValueKey(widget.viewModel.getToDobyIndex(index).id),
+                  toDo: widget.viewModel.getToDobyIndex(index), 
+                  onCheck: () async {
+                    final id = widget.viewModel.getToDobyIndex(index).id;
+                    if (id == null) return;
+                    widget.viewModel.checkToDo.execute(id);
+                  },
+                  confirmDismiss: (_) async {
+                    final id = widget.viewModel.getToDobyIndex(index).id;
+                    if (id == null) return false;
+                    await widget.viewModel.deleteToDo.execute(id);
+                    if (widget.viewModel.deleteToDo.completed) {
+                      return true;
+                    } else {
+                      return false;
+                    }
+                  },
+                  changeName: () async {
+                    final id = widget.viewModel.getToDobyIndex(index).id;
+                    if (id == null) return;
+                    widget.viewModel.renameToDo.execute(id);
+                  }
+                )
+              );
+            }
+          ),
+    )
+    ),
+     floatingActionButton: FloatingActionButton(
+        onPressed: widget.viewModel.addToDo.execute,
+        tooltip: 'Add task',
+        child: const Icon(Icons.add),
+      ), // This trailing comma makes auto-formatting nicer for build methods.
+  );
   }
 
     void _onResult() {
@@ -101,5 +161,50 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
+class _ToDoElement extends StatelessWidget {
+  const _ToDoElement({
+    super.key,
+    required this.toDo,
+    required this.onCheck,
+    required this.confirmDismiss,
+    required this.changeName,
+  });
 
+  final ToDo toDo;
+  final GestureTapCallback onCheck;
+  final ConfirmDismissCallback confirmDismiss;
+  final VoidCallback changeName;
+
+  @override
+  Widget build(BuildContext context) {
+    return Dismissible(
+      key: ValueKey(toDo.id),
+      direction: DismissDirection.endToStart,
+      confirmDismiss: confirmDismiss,
+      background: Container(
+        color: Colors.red,
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: const Icon(Icons.delete, color: Colors.white),
+       ),
+      child: Row(
+      children: [
+        Checkbox(
+          value: toDo.checked,
+          onChanged: (bool? value) {
+              onCheck;
+            }
+          ),
+          const SizedBox(width: 10,),
+          Padding(
+              padding: EdgeInsets.all(15.0),
+              child: TextField(
+                onSubmitted: (_) => changeName
+              ),
+            ),
+      ],
+    )
+    );
+  }
+}
 

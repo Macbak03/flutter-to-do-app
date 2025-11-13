@@ -41,5 +41,9 @@ class ToDoRepository{
     _toDoList.where((element) => element.id == toDo.id).firstOrNull?.name = toDo.name;  
 
     return const Result.ok(null);
+  } 
+
+  Future<Result<List<ToDo>>> getToDoList() async {
+    return Result.ok(_toDoList);
   }
 }
