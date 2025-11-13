@@ -98,7 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
     )
     ),
      floatingActionButton: FloatingActionButton(
-        onPressed: widget.viewModel.addToDo.execute,
+        onPressed: () => widget.viewModel.addToDo.execute(),
         tooltip: 'Add task',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.

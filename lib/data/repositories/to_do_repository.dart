@@ -6,8 +6,13 @@ class ToDoRepository{
   int _sequentialId = 0;
 
   Future<Result<void>> addToDo() async {
+    final oldToDoListSize = _toDoList.length;
     ToDo toDo = ToDo(id: _sequentialId++);
     _toDoList.add(toDo);
+    final newToDoListSize = _toDoList.length;
+    if (newToDoListSize != oldToDoListSize + 1) {
+      return Result.error(Exception("Failed to add ToDo"));
+    }
     return const Result.ok(null);
   }
 

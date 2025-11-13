@@ -57,7 +57,15 @@ class HomeViewModel extends ChangeNotifier {
         _log.e('Failed to add ToDo', error: resultAdd.error);
       return resultAdd;
       }
-      return resultAdd;
+
+      final resultFetch = await _toDoListRepository.getToDoList();
+      switch (resultFetch) {
+        case Ok<List<ToDo>>():
+          toDoList = resultFetch.value;
+        case Error<List<ToDo>>():
+          _log.e("Failed to load ToDo list", error: resultFetch.error);       
+      }
+      return resultFetch;
     } finally {
       notifyListeners();
     }
