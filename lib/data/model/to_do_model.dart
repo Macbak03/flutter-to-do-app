@@ -3,5 +3,5 @@ class ToDo {
   bool checked;
   String name;
   
-  ToDo({this.checked = false, this.name = ""});
+  ToDo({this.id = null, this.checked = false, this.name = ""});
 }

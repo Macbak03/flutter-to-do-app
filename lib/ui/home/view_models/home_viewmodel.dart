@@ -11,6 +11,7 @@ class HomeViewModel extends ChangeNotifier {
     required ToDoRepository toDoListRepository
 }) : _toDoListRepository = toDoListRepository {
   load = Command0(_load)..execute();
+  addToDo = Command0(_addToDo);
   deleteToDo = Command1(_deleteToDo);
   renameToDo = Command2(_renameToDo);
 }
@@ -20,6 +21,7 @@ class HomeViewModel extends ChangeNotifier {
   final _log = Logger();
 
   late Command0 load;
+  late Command0 addToDo;
   late Command1<void, int> deleteToDo;
   late Command2<void, int, String> renameToDo;
 
@@ -29,15 +31,31 @@ class HomeViewModel extends ChangeNotifier {
     return const Result.ok(null);
   }
 
+  Future<Result<void>> _addToDo() async {
+    try {
+      final resultAdd = await _toDoListRepository.addToDo();
+      switch (resultAdd) {
+      case Ok<void>():
+        _log.i('Added ToDo');
+      case Error<void>():
+        _log.e('Failed to add ToDo', error: resultAdd.error);
+      return resultAdd;
+      }
+      return resultAdd;
+    } finally {
+      notifyListeners();
+    }
+  }
+
   Future<Result<void>> _deleteToDo(int id) async {
       try {
         final resultDelete = await _toDoListRepository.removeToDo(id);
         switch (resultDelete) {
-          case Ok<void>():
-          _log.i('Deleted booking $id');
+        case Ok<void>():
+          _log.i('Deleted ToDo $id');
         case Error<void>():
-          _log.e('Failed to delete booking $id', error: resultDelete.error);
-          return resultDelete;
+          _log.e('Failed to delete ToDO $id', error: resultDelete.error);
+        return resultDelete;
         }
 
         //Reload to do list from database (in the future)

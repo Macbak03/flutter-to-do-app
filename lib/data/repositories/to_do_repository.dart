@@ -5,8 +5,8 @@ class ToDoRepository{
   final _toDoList = List<ToDo>.empty(growable: true);
   int _sequentialId = 0;
 
-  Future<Result<void>> addToDo(ToDo toDo) async {
-    toDo.id = _sequentialId ++;
+  Future<Result<void>> addToDo() async {
+    ToDo toDo = ToDo(id: _sequentialId++);
     _toDoList.add(toDo);
     return const Result.ok(null);
   }
