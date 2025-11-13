@@ -40,7 +40,6 @@ class HomeViewModel extends ChangeNotifier {
         case Error<List<ToDo>>():
           _log.e("Failed to load ToDo list", error: result.error);       
       }
-      sleep(Duration(seconds: 2)); //for now sleep to test loading indicator
       return result;
     } finally {
       notifyListeners();
@@ -55,17 +54,9 @@ class HomeViewModel extends ChangeNotifier {
         _log.i('Added ToDo');
       case Error<void>():
         _log.e('Failed to add ToDo', error: resultAdd.error);
+      }
+      _load();
       return resultAdd;
-      }
-
-      final resultFetch = await _toDoListRepository.getToDoList();
-      switch (resultFetch) {
-        case Ok<List<ToDo>>():
-          toDoList = resultFetch.value;
-        case Error<List<ToDo>>():
-          _log.e("Failed to load ToDo list", error: resultFetch.error);       
-      }
-      return resultFetch;
     } finally {
       notifyListeners();
     }
@@ -79,12 +70,11 @@ class HomeViewModel extends ChangeNotifier {
           _log.i('Deleted ToDo $id');
         case Error<void>():
           _log.e('Failed to delete ToDO $id', error: resultDelete.error);
-        return resultDelete;
         }
 
         //Reload to do list from database (in the future)
-        sleep(Duration(seconds: 2));
-        return Result.ok(null);
+        _load();
+        return resultDelete;
       } finally {
         notifyListeners();
       }
@@ -104,7 +94,7 @@ class HomeViewModel extends ChangeNotifier {
         _log.e('Failed to rename ToDo $id', error: resultRename.error);
       }
       //Reload to do list from database
-      sleep(Duration(seconds: 2));
+      _load();
       return resultRename;
     } finally {
       notifyListeners();
@@ -120,10 +110,15 @@ class HomeViewModel extends ChangeNotifier {
         case Error<void>():
         _log.e('Failed to check ToDo $id', error: resultCheck.error);
       }
+      _load();
       return resultCheck;
     } finally {
       notifyListeners();
     }
+  }
+
+  Future<void> refresh() async {
+    load.execute();
   }
 
   ToDo getToDobyIndex(int index) {

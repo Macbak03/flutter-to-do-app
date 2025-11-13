@@ -31,7 +31,7 @@ class ToDoRepository{
     if (toDo == null) {
       return Result.error(Exception("toDo not found when trying to check"));
     }
-    toDo.checked = toDo.checked;
+    toDo.checked = !toDo.checked;
     _toDoList.where((element) => element.id == toDo.id).firstOrNull?.checked = toDo.checked;  
 
     return const Result.ok(null);

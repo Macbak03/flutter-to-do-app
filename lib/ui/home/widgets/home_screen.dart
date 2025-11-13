@@ -161,7 +161,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class _ToDoElement extends StatelessWidget {
+class _ToDoElement extends StatefulWidget {
   const _ToDoElement({
     super.key,
     required this.toDo,
@@ -176,11 +176,39 @@ class _ToDoElement extends StatelessWidget {
   final VoidCallback changeName;
 
   @override
+  State<_ToDoElement> createState() => _ToDoElementState();
+}
+
+class _ToDoElementState extends State<_ToDoElement> {
+  late TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.toDo.name);
+  }
+
+  @override
+  void didUpdateWidget(covariant _ToDoElement oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Jeśli ToDo zmienił się (inna instancja) — aktualizuj controller
+    if (oldWidget.toDo.id != widget.toDo.id) {
+      _controller.text = widget.toDo.name;
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Dismissible(
-      key: ValueKey(toDo.id),
+      key: ValueKey(widget.toDo.id),
       direction: DismissDirection.endToStart,
-      confirmDismiss: confirmDismiss,
+      confirmDismiss: widget.confirmDismiss,
       background: Container(
         color: Colors.red,
         alignment: Alignment.centerRight,
@@ -190,16 +218,16 @@ class _ToDoElement extends StatelessWidget {
       child: Row(
       children: [
         Checkbox(
-          value: toDo.checked,
+          value: widget.toDo.checked,
           onChanged: (bool? value) {
-              onCheck;
+              widget.onCheck();
             }
           ),
           const SizedBox(width: 10,),
-          Padding(
-              padding: EdgeInsets.all(15.0),
+          Expanded(
               child: TextField(
-                onSubmitted: (_) => changeName
+                controller: _controller,
+                onSubmitted: (_) => widget.changeName()
               ),
             ),
       ],
