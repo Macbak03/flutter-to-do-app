@@ -1,8 +1,6 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:logger/logger.dart';
-import 'package:to_do_app/data/model/to_do_model.dart';
+import 'package:to_do_app/domain/models/to_do/to_do_model.dart';
 import 'package:to_do_app/data/repositories/to_do_repository.dart';
 import 'package:to_do_app/utils/command.dart';
 import 'package:to_do_app/utils/result.dart';
@@ -22,7 +20,9 @@ class HomeViewModel extends ChangeNotifier {
 
   final _log = Logger();
 
-  List<ToDo> toDoList = [];
+  List<ToDo> _toDoList = [];
+
+  List<ToDo> get toDoList => _toDoList;
 
   late Command0 load;
   late Command0 addToDo;
@@ -35,7 +35,7 @@ class HomeViewModel extends ChangeNotifier {
       final result = await _toDoListRepository.getToDoList();
       switch (result) {
         case Ok<List<ToDo>>():
-          toDoList = result.value;
+          _toDoList = result.value;
           _log.i("Loaded ToDo list");
         case Error<List<ToDo>>():
           _log.e("Failed to load ToDo list", error: result.error);       
@@ -86,7 +86,7 @@ class HomeViewModel extends ChangeNotifier {
       if (toDo == null) {
         return Result.error(Exception("ToDo was null"));
       }
-      final resultRename = await _toDoListRepository.renameToDo(id, toDo.name);
+      final resultRename = await _toDoListRepository.renameToDo(id, toDo.task);
       switch (resultRename) {
         case Ok<void>():
         _log.i('Renamed ToDo $id');

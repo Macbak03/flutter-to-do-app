@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:to_do_app/data/model/to_do_model.dart';
+import 'package:to_do_app/domain/models/to_do/to_do_model.dart';
 import 'package:to_do_app/ui/core/ui/error_indicator.dart';
 import 'package:to_do_app/ui/home/view_models/home_viewmodel.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key, required this.viewModel});
+class HomeScreenMobile extends StatefulWidget {
+  const HomeScreenMobile({super.key, required this.viewModel});
 
   final HomeViewModel viewModel;
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<HomeScreenMobile> createState() => _HomeScreenMobileState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenMobileState extends State<HomeScreenMobile> {
   @override
   void initState() {
     super.initState();
@@ -22,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
-  void didUpdateWidget(covariant HomeScreen oldWidget) {
+  void didUpdateWidget(covariant HomeScreenMobile oldWidget) {
     super.didUpdateWidget(oldWidget);
     oldWidget.viewModel.deleteToDo.removeListener(_onResult);
     oldWidget.viewModel.renameToDo.removeListener(_onResult);
@@ -185,7 +185,7 @@ class _ToDoElementState extends State<_ToDoElement> {
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController(text: widget.toDo.name);
+    _controller = TextEditingController(text: widget.toDo.task);
   }
 
   @override
@@ -193,7 +193,7 @@ class _ToDoElementState extends State<_ToDoElement> {
     super.didUpdateWidget(oldWidget);
     // Jeśli ToDo zmienił się (inna instancja) — aktualizuj controller
     if (oldWidget.toDo.id != widget.toDo.id) {
-      _controller.text = widget.toDo.name;
+      _controller.text = widget.toDo.task;
     }
   }
 
