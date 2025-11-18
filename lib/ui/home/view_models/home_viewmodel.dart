@@ -12,7 +12,7 @@ class HomeViewModel extends ChangeNotifier {
   load = Command0(_load)..execute();
   addToDo = Command0(_addToDo);
   deleteToDo = Command1(_deleteToDo);
-  renameToDo = Command1(_renameToDo);
+  renameToDo = Command2(_renameToDo);
   checkToDo = Command1(_checkToDo);
 }
 
@@ -27,7 +27,7 @@ class HomeViewModel extends ChangeNotifier {
   late Command0 load;
   late Command0 addToDo;
   late Command1<void, int> deleteToDo;
-  late Command1<void, int> renameToDo;
+  late Command2<void, int, String> renameToDo;
   late Command1<void, int> checkToDo;
 
   Future<Result> _load() async {
@@ -80,13 +80,13 @@ class HomeViewModel extends ChangeNotifier {
       }
   }
 
-  Future<Result<void>> _renameToDo(int id) async {
+  Future<Result<void>> _renameToDo(int id, String task) async {
     try {
       final toDo = toDoList.where((element) => element.id == id).firstOrNull;
       if (toDo == null) {
         return Result.error(Exception("ToDo was null"));
       }
-      final resultRename = await _toDoListRepository.renameToDo(id, toDo.task);
+      final resultRename = await _toDoListRepository.renameToDo(id, task);
       switch (resultRename) {
         case Ok<void>():
         _log.i('Renamed ToDo $id');

@@ -85,10 +85,10 @@ class _HomeScreenDesktopState extends State<HomeScreenDesktop> {
                       return false;
                     }
                   },
-                  changeName: () async {
+                  changeName: (newName) async {
                     final id = widget.viewModel.getToDobyIndex(index).id;
                     if (id == null) return;
-                    widget.viewModel.renameToDo.execute(id);
+                    widget.viewModel.renameToDo.execute(id, newName);
                   }
                 )
               );
@@ -173,7 +173,7 @@ class _ToDoElement extends StatefulWidget {
   final ToDo toDo;
   final GestureTapCallback onCheck;
   final ConfirmDismissCallback confirmDismiss;
-  final VoidCallback changeName;
+  final Function(String) changeName;
 
   @override
   State<_ToDoElement> createState() => _ToDoElementState();
@@ -227,7 +227,7 @@ class _ToDoElementState extends State<_ToDoElement> {
           Expanded(
               child: TextField(
                 controller: _controller,
-                onSubmitted: (_) => widget.changeName()
+                onSubmitted: (_) => widget.changeName(_controller.text)
               ),
             ),
       ],

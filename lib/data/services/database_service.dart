@@ -32,7 +32,8 @@ class DatabaseService extends Sqflite{
         version: 1,
       ),
     );
-    print('Database path: ${_databaseFactory.getDatabasesPath()}');
+    final db_path = await _databaseFactory.getDatabasesPath();
+    print('Database path: $db_path');
   }
 
   Future<Result<void>> insert() async {
